@@ -12,9 +12,19 @@ class PlateauViewModel @Inject constructor() : ViewModel() {
     private val _uiState = MutableStateFlow(PlateauUiState())
     val uiState = _uiState.asStateFlow()
 
-    fun dropOnPlateau(case: Int, elem: Int) {
+    fun dropOnPlateau(index: Int, elem: Int) {
         val nv_plateau = uiState.value.plateau.toMutableList()
-        nv_plateau[case] = elem
+        nv_plateau[index] = elem
+        _uiState.update {
+            it.copy(
+                plateau = nv_plateau.toList()
+            )
+        }
+    }
+
+    fun resetCase(index: Int) {
+        val nv_plateau = uiState.value.plateau.toMutableList()
+        nv_plateau[index] = -1
         _uiState.update {
             it.copy(
                 plateau = nv_plateau.toList()
@@ -25,5 +35,5 @@ class PlateauViewModel @Inject constructor() : ViewModel() {
 
 data class PlateauUiState(
     val nbCases: Int = 8,
-    val plateau: List<Int> = listOf(0,0,0,0,0,0,0,0)
+    val plateau: List<Int> = listOf(-1,-1,-1,-1,-1,-1,-1,-1)
 )
