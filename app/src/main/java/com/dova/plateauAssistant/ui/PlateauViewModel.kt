@@ -1,11 +1,11 @@
 package com.dova.plateauAssistant.ui
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dova.plateauAssistant.data.entities.Plateau
 import com.dova.plateauAssistant.domain.PlateauRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -14,10 +14,24 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PlateauViewModel @Inject constructor(
-    private val plateauRepository: PlateauRepository
+    private val plateauRepository: PlateauRepository,
+    savedStateHandle: SavedStateHandle
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(PlateauUiState())
     val uiState = _uiState.asStateFlow()
+
+    init {
+        val plateauToLoad = savedStateHandle.get<String>("id")?.toIntOrNull()
+        if (plateauToLoad != null) {
+            viewModelScope.launch {
+                _uiState.update {
+                    PlateauUiState(
+                        plateau = plateauRepository.getPlateau(plateauToLoad)
+                    )
+                }
+            }
+        }
+    }
 
     fun dropOnPlateau(index: Int, elem: Int) {
         val newValues = uiState.value.plateau.values.toMutableList()
@@ -70,25 +84,6 @@ class PlateauViewModel @Inject constructor(
         }
         viewModelScope.launch {
             plateauRepository.insertPlateau(uiState.value.plateau)
-        }
-    }
-
-    //todo : snippet, to move in the init()
-    fun loadPlateau() {
-        var tmpPlateau = uiState.value.plateau
-        viewModelScope.launch {
-            //todo : remove and replace by an id search (transmitted through navigation)
-            plateauRepository.getAllPlateaux().collect {
-                tmpPlateau = it.firstOrNull()!!
-            }
-        }
-        viewModelScope.launch {
-            delay(20)
-            _uiState.update {
-                it.copy(
-                    plateau = tmpPlateau
-                )
-            }
         }
     }
 

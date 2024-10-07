@@ -13,6 +13,9 @@ interface PlateauDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(plateau: Plateau)
 
-    @Query("SELECT * from plateaux")
+    @Query("SELECT * from plateaux")//TODO : order by index
     fun getAllPlateaux(): Flow<List<Plateau>>
+
+    @Query("SELECT * from plateaux where id = :id")
+    fun getPlateau(id: Int): Flow<Plateau>
 }

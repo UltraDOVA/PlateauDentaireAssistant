@@ -47,6 +47,7 @@ fun PlateauScreen() {
         ) {
             PlateauComposable(
                 uiState.value.plateau,
+                editable = true,
                 { index, value -> viewModel.dropOnPlateau(index, value) },
                 { index -> viewModel.resetCase(index) }
             )
@@ -54,9 +55,6 @@ fun PlateauScreen() {
         Spacer(Modifier.weight(1f))
         Button(onClick = { viewModel.askForName() }) {
             Text("Save")
-        }
-        Button(onClick = { viewModel.loadPlateau() }) {
-            Text("Load")
         }
         Spacer(Modifier.weight(1f))
     }

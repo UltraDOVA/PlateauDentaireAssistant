@@ -21,9 +21,9 @@ fun Navigation() {
     val navController = rememberNavController()
 
     Scaffold(bottomBar = { NavBar(navController) }) { innerPadding ->
-        NavHost(navController, startDestination = "plateau", modifier = Modifier.padding(innerPadding)) {
-            composable("plateau") { PlateauScreen() }
-            composable("saves") { SavedPlateaux() }
+        NavHost(navController, startDestination = "plateau/", modifier = Modifier.padding(innerPadding)) {
+            composable("plateau/{id}") { PlateauScreen() }
+            composable("saves") { SavedPlateaux(navController) }
         }
     }
 }
@@ -36,7 +36,7 @@ fun NavBar(
         Modifier.fillMaxWidth().padding(10.dp).padding(bottom = 35.dp),
         horizontalArrangement = Arrangement.SpaceAround
     ) {
-        Button(onClick = { navController.navigate("plateau") }) {
+        Button(onClick = { navController.navigate("plateau/") }) {
             Text("Plateau")
         }
         Button(onClick = { navController.navigate("saves") }) {
